@@ -5,17 +5,37 @@
  */
 package com.smsc.am.view.user;
 
+import com.smsc.am.controller.UserController;
+import com.smsc.am.model.Emplyee;
+import com.smsc.am.model.LeaveType;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author SASANGA
  */
 public class UserView extends javax.swing.JFrame {
 
+    private int selectedRow;
+    private final UserController userController;
+    private ArrayList<Emplyee> emplyees;
+    private Emplyee selectedEmployee;
+    private String employeeName;
+    
     /**
      * Creates new form UserView
      */
     public UserView() {
+        this.selectedRow = -1;
         initComponents();
+        userController = new UserController();
+        setLocationRelativeTo(null);
+        loadUsersByType(2);
     }
 
     /**
@@ -27,22 +47,123 @@ public class UserView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jXImagePanel1 = new org.jdesktop.swingx.JXImagePanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblUsers = new javax.swing.JTable();
+        jTextField1 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        radiEmployee = new javax.swing.JRadioButton();
+        radiUser = new javax.swing.JRadioButton();
+        radiAll = new javax.swing.JRadioButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jXImagePanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        tblUsers.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        tblUsers.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Email", "Name", "Phone No", "Acount Type"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblUsers.setRowHeight(25);
+        jScrollPane1.setViewportView(tblUsers);
+
+        jTextField1.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+
+        jButton1.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jButton1.setText("Delete");
+
+        jButton2.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jButton2.setText("Edit");
+
+        radiEmployee.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroup1.add(radiEmployee);
+        radiEmployee.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        radiEmployee.setSelected(true);
+        radiEmployee.setText("Employee");
+        radiEmployee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radiEmployeeActionPerformed(evt);
+            }
+        });
+
+        radiUser.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroup1.add(radiUser);
+        radiUser.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        radiUser.setText("System Users");
+        radiUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radiUserActionPerformed(evt);
+            }
+        });
+
+        radiAll.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroup1.add(radiAll);
+        radiAll.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        radiAll.setText("All");
+        radiAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radiAllActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jXImagePanel1Layout = new javax.swing.GroupLayout(jXImagePanel1);
         jXImagePanel1.setLayout(jXImagePanel1Layout);
         jXImagePanel1Layout.setHorizontalGroup(
             jXImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 621, Short.MAX_VALUE)
+            .addGroup(jXImagePanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jXImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jXImagePanel1Layout.createSequentialGroup()
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(radiEmployee)
+                        .addGap(18, 18, 18)
+                        .addComponent(radiUser)
+                        .addGap(18, 18, 18)
+                        .addComponent(radiAll)
+                        .addGap(0, 23, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jXImagePanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1)))
+                .addContainerGap())
         );
         jXImagePanel1Layout.setVerticalGroup(
             jXImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 395, Short.MAX_VALUE)
+            .addGroup(jXImagePanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jXImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(radiEmployee)
+                    .addComponent(radiUser)
+                    .addComponent(radiAll))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jXImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jMenu1.setText("Manage");
@@ -64,15 +185,11 @@ public class UserView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jXImagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jXImagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jXImagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jXImagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -82,6 +199,18 @@ public class UserView extends javax.swing.JFrame {
         NewUser newUser = new NewUser();
         newUser.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void radiEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiEmployeeActionPerformed
+        loadUsersByType(2);
+    }//GEN-LAST:event_radiEmployeeActionPerformed
+
+    private void radiUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiUserActionPerformed
+        loadUsersByType(1);
+    }//GEN-LAST:event_radiUserActionPerformed
+
+    private void radiAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiAllActionPerformed
+        loadUsers();
+    }//GEN-LAST:event_radiAllActionPerformed
 
     /**
      * @param args the command line arguments
@@ -119,9 +248,65 @@ public class UserView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTextField1;
     private org.jdesktop.swingx.JXImagePanel jXImagePanel1;
+    private javax.swing.JRadioButton radiAll;
+    private javax.swing.JRadioButton radiEmployee;
+    private javax.swing.JRadioButton radiUser;
+    private javax.swing.JTable tblUsers;
     // End of variables declaration//GEN-END:variables
+
+    private void loadUsersByType(int type) {
+        try {
+            emplyees = userController.listUsersByType(type);
+            DefaultTableModel dtm = (DefaultTableModel) tblUsers.getModel();
+            dtm.setRowCount(0);
+            this.selectedRow = -1;
+            this.selectedEmployee = null;
+            String accountType = null;
+            for (Emplyee emplyee : emplyees) {
+                if (emplyee.getType() == 1) {
+                    accountType = "System User";
+                } else {
+                    accountType = "Employee";
+                }
+                Object[] row = {emplyee.getEmail(), emplyee.getName(), emplyee.getPhoneNumber(), accountType};
+                dtm.addRow(row);
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(UserView.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Server error orcked in list users", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void loadUsers() {
+        try {
+            emplyees = userController.listUsers();
+            DefaultTableModel dtm = (DefaultTableModel) tblUsers.getModel();
+            dtm.setRowCount(0);
+            this.selectedRow = -1;
+            this.selectedEmployee = null;
+            String accountType = null;
+            for (Emplyee emplyee : emplyees) {
+                if (emplyee.getType() == 1) {
+                    accountType = "System User";
+                } else {
+                    accountType = "Employee";
+                }
+                Object[] row = {emplyee.getEmail(), emplyee.getName(), emplyee.getPhoneNumber(), accountType};
+                dtm.addRow(row);
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(UserView.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Server error orcked in list users", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
 }
