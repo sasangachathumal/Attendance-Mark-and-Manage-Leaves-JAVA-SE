@@ -34,18 +34,17 @@ public class UserDAO {
     
     public int updateUser(Emplyee emplyee) throws ClassNotFoundException, SQLException{
         Connection connection = DBController.createConnection().getConnection();
-        PreparedStatement ps = connection.prepareStatement("UPDATE EMPLOYEE SET NAME=?,PN_NUMBER=?,EMAIL=? WHERE ID=?");
-        ps.setObject(4, emplyee.getId());
+        PreparedStatement ps = connection.prepareStatement("UPDATE EMPLOYEE SET NAME=?,PN_NUMBER=? WHERE ID=?");
+        ps.setObject(3, emplyee.getId());
         ps.setObject(1, emplyee.getName());
         ps.setObject(2, emplyee.getPhoneNumber());
-        ps.setObject(3, emplyee.getEmail());
         int executeUpdate = ps.executeUpdate();
         return executeUpdate;
     }
     
     public int changePassword(Emplyee emplyee) throws ClassNotFoundException, SQLException{
         Connection connection = DBController.createConnection().getConnection();
-        PreparedStatement ps = connection.prepareStatement("UPDATE EMPLOYEE SET PASSWORD=? WHERE ID=?");
+        PreparedStatement ps = connection.prepareStatement("UPDATE EMPLOYEE SET PASSWORD =? WHERE ID=?");
         ps.setObject(2, emplyee.getId());
         ps.setObject(1, emplyee.getPassword());
         int executeUpdate = ps.executeUpdate();
@@ -54,14 +53,14 @@ public class UserDAO {
     
     public int deleteUser(Long ID) throws ClassNotFoundException, SQLException{
         Connection connection = DBController.createConnection().getConnection();
-        PreparedStatement ps = connection.prepareStatement("DELETE EMPLOYEE WHERE ID=?");
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM EMPLOYEE WHERE ID = ?");
         ps.setObject(1, ID);
         int executeUpdate = ps.executeUpdate();
         return executeUpdate;
     }
     
     public Emplyee searchUser_byName(String email) throws ClassNotFoundException, SQLException{
-        String sql="SELECT * FROM EMPLOYEE WHERE EMAIL='"+email+"'";
+        String sql="SELECT * FROM EMPLOYEE WHERE EMAIL = '"+email+"'";
         Connection connection = DBController.createConnection().getConnection();
         Statement cstm = connection.createStatement();
         ResultSet executeQuery = cstm.executeQuery(sql);
@@ -70,6 +69,20 @@ public class UserDAO {
         } else {
             return null;
         }
+    }
+    
+    public ArrayList<Emplyee> getUsersByName(String name) throws ClassNotFoundException, SQLException{
+        System.out.println(name);
+        Connection connection = DBController.createConnection().getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM EMPLOYEE WHERE NAME LIKE ?");
+        ps.setObject(1, "%" + name + "%");
+        ResultSet executeQuery = ps.executeQuery();
+        ArrayList<Emplyee> list=new ArrayList<>();
+        while(executeQuery.next()){
+            Emplyee emaploies = new Emplyee(executeQuery.getLong(1), executeQuery.getString(2), executeQuery.getString(3), executeQuery.getString(4), executeQuery.getString(5), executeQuery.getInt(6));
+            list.add(emaploies);
+        }
+        return list;
     }
     
     public ArrayList<Emplyee> listUsers() throws ClassNotFoundException, SQLException{

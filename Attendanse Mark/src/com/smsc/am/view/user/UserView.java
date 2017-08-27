@@ -8,6 +8,7 @@ package com.smsc.am.view.user;
 import com.smsc.am.controller.UserController;
 import com.smsc.am.model.Emplyee;
 import com.smsc.am.model.LeaveType;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -26,7 +27,8 @@ public class UserView extends javax.swing.JFrame {
     private ArrayList<Emplyee> emplyees;
     private Emplyee selectedEmployee;
     private String employeeName;
-    
+    private ArrayList<Emplyee> searchUsersByName;
+
     /**
      * Creates new form UserView
      */
@@ -51,9 +53,9 @@ public class UserView extends javax.swing.JFrame {
         jXImagePanel1 = new org.jdesktop.swingx.JXImagePanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblUsers = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
+        btnDeleteUser = new javax.swing.JButton();
+        btnEditUser = new javax.swing.JButton();
         radiEmployee = new javax.swing.JRadioButton();
         radiUser = new javax.swing.JRadioButton();
         radiAll = new javax.swing.JRadioButton();
@@ -83,15 +85,46 @@ public class UserView extends javax.swing.JFrame {
             }
         });
         tblUsers.setRowHeight(25);
+        tblUsers.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblUsersMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblUsers);
 
-        jTextField1.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        txtSearch.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        txtSearch.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtSearchFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtSearchFocusLost(evt);
+            }
+        });
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSearchKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
+            }
+        });
 
-        jButton1.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jButton1.setText("Delete");
+        btnDeleteUser.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        btnDeleteUser.setText("Delete");
+        btnDeleteUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteUserActionPerformed(evt);
+            }
+        });
 
-        jButton2.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jButton2.setText("Edit");
+        btnEditUser.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        btnEditUser.setText("Edit");
+        btnEditUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditUserActionPerformed(evt);
+            }
+        });
 
         radiEmployee.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroup1.add(radiEmployee);
@@ -132,7 +165,7 @@ public class UserView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jXImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jXImagePanel1Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(radiEmployee)
                         .addGap(18, 18, 18)
@@ -143,9 +176,9 @@ public class UserView extends javax.swing.JFrame {
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jXImagePanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton2)
+                        .addComponent(btnEditUser)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(btnDeleteUser)))
                 .addContainerGap())
         );
         jXImagePanel1Layout.setVerticalGroup(
@@ -153,7 +186,7 @@ public class UserView extends javax.swing.JFrame {
             .addGroup(jXImagePanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jXImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(radiEmployee)
                     .addComponent(radiUser)
                     .addComponent(radiAll))
@@ -161,8 +194,8 @@ public class UserView extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jXImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(btnDeleteUser)
+                    .addComponent(btnEditUser))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -197,6 +230,7 @@ public class UserView extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         NewUser newUser = new NewUser();
+        newUser.setUserView(this);
         newUser.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -211,6 +245,50 @@ public class UserView extends javax.swing.JFrame {
     private void radiAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiAllActionPerformed
         loadUsers();
     }//GEN-LAST:event_radiAllActionPerformed
+
+    private void btnEditUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditUserActionPerformed
+        if (selectedRow > -1) {
+            showUpdatePopup();
+        } else {
+            JOptionPane.showMessageDialog(this, "Please Select a Row !!!!!");
+        }
+    }//GEN-LAST:event_btnEditUserActionPerformed
+
+    private void tblUsersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUsersMouseClicked
+        selectedRow = tblUsers.getSelectedRow();
+        getSelectedUser();
+    }//GEN-LAST:event_tblUsersMouseClicked
+
+    private void txtSearchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSearchFocusLost
+        if (txtSearch.getText().equals("")) {
+            txtSearch.setText("Enter name to search");
+        }
+    }//GEN-LAST:event_txtSearchFocusLost
+
+    private void txtSearchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSearchFocusGained
+        if (txtSearch.getText().equals("Enter name to search")) {
+            txtSearch.setText("");
+        }
+    }//GEN-LAST:event_txtSearchFocusGained
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+
+    }//GEN-LAST:event_txtSearchKeyPressed
+
+    private void btnDeleteUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteUserActionPerformed
+        if (selectedRow > -1) {
+            deleteUser();
+        } else {
+            JOptionPane.showMessageDialog(this, "Please Select a Row !!!!!");
+        }
+    }//GEN-LAST:event_btnDeleteUserActionPerformed
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+//        if (evt.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
+//            
+//        }
+        searchUsers();
+    }//GEN-LAST:event_txtSearchKeyReleased
 
     /**
      * @param args the command line arguments
@@ -248,19 +326,19 @@ public class UserView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDeleteUser;
+    private javax.swing.JButton btnEditUser;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private org.jdesktop.swingx.JXImagePanel jXImagePanel1;
     private javax.swing.JRadioButton radiAll;
     private javax.swing.JRadioButton radiEmployee;
     private javax.swing.JRadioButton radiUser;
     private javax.swing.JTable tblUsers;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 
     private void loadUsersByType(int type) {
@@ -270,7 +348,8 @@ public class UserView extends javax.swing.JFrame {
             dtm.setRowCount(0);
             this.selectedRow = -1;
             this.selectedEmployee = null;
-            String accountType = null;
+            String accountType;
+            accountType = null;
             for (Emplyee emplyee : emplyees) {
                 if (emplyee.getType() == 1) {
                     accountType = "System User";
@@ -285,7 +364,7 @@ public class UserView extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Server error orcked in list users", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void loadUsers() {
         try {
             emplyees = userController.listUsers();
@@ -308,5 +387,89 @@ public class UserView extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Server error orcked in list users", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
+    private void showUpdatePopup() {
+        UserUpdate userUpdate = new UserUpdate(this, true);
+        userUpdate.setEmployeeForUpdate(selectedEmployee);
+        userUpdate.setUserView(this);
+        userUpdate.setVisible(true);
+    }
+
+    public void UpdateTable() {
+        if (radiEmployee.isSelected()) {
+            loadUsersByType(2);
+        } else if (radiUser.isSelected()) {
+            loadUsersByType(1);
+        } else {
+            loadUsers();
+        }
+    }
+
+    private void getSelectedUser() {
+        String deEmail = tblUsers.getValueAt(selectedRow, 0).toString();
+        for (Emplyee emplyee : emplyees) {
+            if (emplyee.getEmail().equals(deEmail)) {
+                selectedEmployee = emplyee;
+            }
+        }
+    }
+
+    private void searchUsers() {
+        if (!txtSearch.getText().equals("") && !txtSearch.getText().equals("Enter name to search")) {
+            try {
+                searchUsersByName = userController.searchUsersByName(txtSearch.getText());
+                if (searchUsersByName != null) {
+                    DefaultTableModel dtm = (DefaultTableModel) tblUsers.getModel();
+                    dtm.setRowCount(0);
+                    this.selectedRow = -1;
+                    this.selectedEmployee = null;
+                    String accountType;
+                    accountType = null;
+                    for (Emplyee emplyee : searchUsersByName) {
+                        if (emplyee.getType() == 1) {
+                            accountType = "System User";
+                        } else {
+                            accountType = "Employee";
+                        }
+                        Object[] row = {emplyee.getEmail(), emplyee.getName(), emplyee.getPhoneNumber(), accountType};
+                        dtm.addRow(row);
+                    }
+                }
+            } catch (ClassNotFoundException | SQLException ex) {
+                Logger.getLogger(UserView.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Server error orcked in list users", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            if (radiEmployee.isSelected()) {
+                loadUsersByType(2);
+            } else if (radiUser.isSelected()) {
+                loadUsersByType(1);
+            } else {
+                loadUsers();
+            }
+        }
+    }
+
+    private void deleteUser() {
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure?\n You want to remove this user.");
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                boolean isDeleteUser = userController.deleteUser(selectedEmployee.getId());
+                if (isDeleteUser) {
+                    JOptionPane.showMessageDialog(this, "User successfully removed!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    if (radiEmployee.isSelected()) {
+                        loadUsersByType(2);
+                    } else if (radiUser.isSelected()) {
+                        loadUsersByType(1);
+                    } else {
+                        loadUsers();
+                    }
+                }
+            } catch (ClassNotFoundException | SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Server error orcked in delete users", "Error", JOptionPane.ERROR_MESSAGE);
+                Logger.getLogger(UserView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
 }

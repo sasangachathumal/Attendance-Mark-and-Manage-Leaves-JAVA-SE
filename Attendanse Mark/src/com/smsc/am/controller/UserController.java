@@ -31,6 +31,15 @@ public class UserController {
         }
     }
     
+    public ArrayList<Emplyee> searchUsersByName(String name) throws ClassNotFoundException, SQLException {
+        ArrayList<Emplyee> emplyeeList = userDAO.getUsersByName(name);
+        if (!emplyeeList.isEmpty()) {
+            return emplyeeList;
+        } else {
+            return null;
+        }
+    }
+    
     public ArrayList<Emplyee> listUsersByType(int type) throws ClassNotFoundException, SQLException {
         ArrayList<Emplyee> emplyeeList = userDAO.listUsersByType(type);
         if (!emplyeeList.isEmpty()) {

@@ -18,6 +18,8 @@ import javax.swing.JOptionPane;
  */
 public class NewUser extends javax.swing.JFrame {
 
+    private UserView userView;
+    
     /**
      * Creates new form NewUser
      */
@@ -367,6 +369,7 @@ public class NewUser extends javax.swing.JFrame {
                 boolean isRegisted = userController.registerNewSystemUserOrEmployee(emplyee);
                 if (isRegisted) {
                     JOptionPane.showMessageDialog(this, "User registration success!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    this.userView.UpdateTable();
                     this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "User Registration Fail!", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -380,4 +383,8 @@ public class NewUser extends javax.swing.JFrame {
         }
     }
 
+    public void setUserView(UserView userView) {
+        this.userView = userView;
+    }
+    
 }

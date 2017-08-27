@@ -224,7 +224,6 @@ public class LeaveTypeView extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDeleteLeaveTypeActionPerformed
 
     private void btnEditLeaveTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditLeaveTypeActionPerformed
-        System.out.println(selectedRow);
         if (selectedRow > -1) {
             showUpdatePopup();
         } else {
